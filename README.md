@@ -1,0 +1,1 @@
+# RichTap Vibration SDK
