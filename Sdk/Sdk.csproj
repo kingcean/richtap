@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48;net461</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net48;net461</TargetFrameworks>
     <AssemblyName>RichTap.SDK</AssemblyName>
     <RootNamespace>RichTap</RootNamespace>
     <PackageId>RichTap</PackageId>
@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Trivial" Version="7.1.2" />
+    <PackageReference Include="Trivial" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
