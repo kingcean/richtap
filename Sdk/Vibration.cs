@@ -22,9 +22,9 @@ public static class VibrationMotor
     {
         try
         {
-            RichTapInit();
+            VibrationMotorWrapper.Init();
             init = true;
-            RichTapSetCallback(OnGameControllerChange);
+            VibrationMotorWrapper.SetCallback(OnGameControllerChange);
         }
         catch (ExternalException)
         {
@@ -52,8 +52,8 @@ public static class VibrationMotor
         if (initialize == init) return;
         try
         {
-            if (initialize) RichTapInit();
-            else RichTapDestroy();
+            if (initialize) VibrationMotorWrapper.Init();
+            else VibrationMotorWrapper.Destroy();
             init = initialize;
         }
         catch (ExternalException ex)
@@ -68,7 +68,7 @@ public static class VibrationMotor
     /// <returns>The version.</returns>
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static string Version()
-        => RichTapGetVersion();
+        => VibrationMotorWrapper.GetVersion();
 
     /// <summary>
     /// Plays a specific HE format content.
@@ -84,7 +84,7 @@ public static class VibrationMotor
         options ??= new();
         try
         {
-            RichTapPlay(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue);
+            VibrationMotorWrapper.Play(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue);
         }
         catch (ExternalException ex)
         {
@@ -107,7 +107,7 @@ public static class VibrationMotor
         options ??= new();
         try
         {
-            RichTapPlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), int.MaxValue);
+            VibrationMotorWrapper.PlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), int.MaxValue);
         }
         catch (ExternalException ex)
         {
@@ -132,7 +132,7 @@ public static class VibrationMotor
         if (end <= start) return;
         try
         {
-            RichTapPlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), GetMilliseconds(end));
+            VibrationMotorWrapper.PlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), GetMilliseconds(end));
         }
         catch (ExternalException ex)
         {
@@ -174,6 +174,42 @@ public static class VibrationMotor
     /// <exception cref="NotSupportedException">Not supported.</exception>
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static void Play(JsonObjectNode he, TimeSpan start, TimeSpan end, VibrationOptions options = null)
+        => Play(he?.ToString(), start, end, options);
+
+    /// <summary>
+    /// Plays a specific HE format content.
+    /// </summary>
+    /// <param name="he">The HE format content.</param>
+    /// <param name="options">The options.</param>
+    /// <exception cref="InvalidOperationException">Failed to play.</exception>
+    /// <exception cref="NotSupportedException">Not supported.</exception>
+    /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
+    public static void Play(VibrationDescriptionModel he, VibrationOptions options = null)
+        => Play(he?.ToString(), options);
+
+    /// <summary>
+    /// Plays a specific HE format content.
+    /// </summary>
+    /// <param name="he">The HE format content.</param>
+    /// <param name="start">The start position.</param>
+    /// <param name="options">The options.</param>
+    /// <exception cref="InvalidOperationException">Failed to play.</exception>
+    /// <exception cref="NotSupportedException">Not supported.</exception>
+    /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
+    public static void Play(VibrationDescriptionModel he, TimeSpan start, VibrationOptions options = null)
+        => Play(he?.ToString(), start, options);
+
+    /// <summary>
+    /// Plays a specific HE format content.
+    /// </summary>
+    /// <param name="he">The HE format content.</param>
+    /// <param name="start">The start position.</param>
+    /// <param name="end">The end position.</param>
+    /// <param name="options">The options.</param>
+    /// <exception cref="InvalidOperationException">Failed to play.</exception>
+    /// <exception cref="NotSupportedException">Not supported.</exception>
+    /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
+    public static void Play(VibrationDescriptionModel he, TimeSpan start, TimeSpan end, VibrationOptions options = null)
         => Play(he?.ToString(), start, end, options);
 
     /// <summary>
@@ -233,7 +269,7 @@ public static class VibrationMotor
     {
         try
         {
-            RichTapStop();
+            VibrationMotorWrapper.Stop();
         }
         catch (ExternalException ex)
         {
@@ -253,7 +289,7 @@ public static class VibrationMotor
     {
         try
         {
-            RichTapSendLoopParam(GetMilliseconds(interval), VibrationOptions.GetGainValue(gain), VibrationOptions.GetFrequencyFactorValue(frequencyFactor));
+            VibrationMotorWrapper.SendLoopParam(GetMilliseconds(interval), VibrationOptions.GetGainValue(gain), VibrationOptions.GetFrequencyFactorValue(frequencyFactor));
         }
         catch (ExternalException ex)
         {
@@ -268,7 +304,7 @@ public static class VibrationMotor
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static List<string> ListGameControllers()
     {
-        var s = RichTapGetConnectedGameControllers();
+        var s = VibrationMotorWrapper.GetConnectedGameControllers();
         if (string.IsNullOrEmpty(s)) return new();
         var json = JsonObjectNode.TryParse(s);
         return json?.TryGetStringListValue("controllers", true) ?? new();
@@ -280,7 +316,7 @@ public static class VibrationMotor
     /// <param name="enable">true if enable debug log; otherwise, false.</param>
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static void SetDebugLog(bool enable)
-        => EnableDebugLog(enable);
+        => VibrationMotorWrapper.DebugLog(enable);
 
     internal static int GetMilliseconds(TimeSpan span)
     {
@@ -298,41 +334,4 @@ public static class VibrationMotor
         if (file == null) throw new ArgumentNullException(nameof(file));
         return File.ReadAllText(file.FullName);
     }
-
-    #region Impl
-    private const string AssemblyName = "RichTapWinSDKDLL.dll";
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapInit();
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapSetCallback(VibrationMotorCallback cb);
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapDestroy();
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapPlay(string strHE, int loop = 0, int interval = 0, int intensityFactor = 255, int freqFactor = 0);
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapPlaySection(string strHE, int loop = 0, int interval = 0, int intensityFactor = 255, int freqFactor = 0, int start = 0, int end = int.MaxValue);
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapStop();
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapSendLoopParam(int interval, int intensityFactor, int freqFactor);
-
-    [DllImport(AssemblyName)]
-    private extern static void RichTapSetTrigger(int index, int mode, int amplitude, int frequency, int resistive, int startPosition, int endPosition);
-
-    [DllImport(AssemblyName)]
-    private extern static string RichTapGetConnectedGameControllers();
-
-    [DllImport(AssemblyName)]
-    private extern static string RichTapGetVersion();
-
-    [DllImport(AssemblyName)]
-    private extern static void EnableDebugLog(bool enable);
-    #endregion
 }
