@@ -191,6 +191,38 @@ public class VibrationEventModel
     /// Gets or sets the index.
     /// </summary>
     public int Index { get; set; }
+
+    /// <summary>
+    /// Returns a string that represents the current description model.
+    /// </summary>
+    /// <returns>A string that represents the current description model.</returns>
+    public override string ToString()
+    {
+        try
+        {
+            return JsonSerializer.Serialize(this);
+        }
+        catch (JsonException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (ArgumentException)
+        {
+        }
+        catch (NullReferenceException)
+        {
+        }
+        catch (ExternalException)
+        {
+        }
+
+        return base.ToString();
+    }
 }
 
 /// <summary>

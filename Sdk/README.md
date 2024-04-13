@@ -1,16 +1,6 @@
 # RichTap Vibration SDK
 
-```csharp
-using RichTap;
-```
-
-Following are the methods to occur or abort vibration.
-
-- `VibrationMotor.Play` Vibrates by a HE format file with specific options.
-- `VibrationMotor.Stop` Abort current vibration.
-
-## C++ libraries required
-
-- `x86\RichTapWinSDK.dll`
-- `x64\RichTapWinSDK.dll`
-- `arm64\RichTapWinSDK.dll`
+This is the SDK project directory.
+The `VibrationMotor` is the common used class to send request to vibrate or not.
+The SDK is based on the C++ native library.
+It also contains the model for HE JSON string format.

@@ -1,3 +1,3 @@
 # Change log
 
-Please see __[releases](https://github.com/kingcean/richtap/releases)__.
+Please see __[releases](https://github.com/luqiming666/richtap/releases)__.
