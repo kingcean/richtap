@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -31,18 +32,18 @@ public interface IVibrationMotorWrapper
     /// <summary>
     /// Initializes.
     /// </summary>
-    void Init();
+    void Initialize();
 
     /// <summary>
     /// Sets callback.
     /// </summary>
-    /// <param name="cb"></param>
-    void SetCallback(VibrationMotorCallback cb);
+    /// <param name="cb">The callback.</param>
+    void RegisterCallback(VibrationMotorCallback cb);
 
     /// <summary>
-    /// Destroys.
+    /// Dispose.
     /// </summary>
-    void Destroy();
+    void Dispose();
 
     /// <summary>
     /// Plays.
@@ -95,7 +96,28 @@ public interface IVibrationMotorWrapper
     /// Gets the information in JSON object about connected game controllers.
     /// </summary>
     /// <returns>The name.</returns>
-    string GetConnectedGameControllers();
+    string GameControllers();
+
+    /// <summary>
+    /// Set the gain of strength to hardware.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="value">The value</param>
+    bool StrengthGain(int index, int value);
+
+    /// <summary>
+    /// Gets or sets the signal-convert on controller.
+    /// </summary>
+    /// <param name="isEnabled">true if enable; otherwise, false.</param>
+    /// <returns></returns>
+    bool SignalConverterState(bool isEnabled);
+
+    /// <summary>
+    /// Gets or sets the rumble effect on controller.
+    /// </summary>
+    /// <param name="isEnabled">true if enable; otherwise, false.</param>
+    /// <returns></returns>
+    bool RumbleState(bool isEnabled);
 
     /// <summary>
     /// Gets the version.
@@ -179,13 +201,13 @@ public static class VibrationMotorWrapper
         => instance = wrapper;
 
     internal static void Init()
-        => Instance.Init();
+        => Instance.Initialize();
 
-    internal static void SetCallback(VibrationMotorCallback cb)
-        => Instance.SetCallback(cb);
+    internal static void RegisterCallback(VibrationMotorCallback cb)
+        => Instance.RegisterCallback(cb);
 
     internal static void Destroy()
-        => Instance.Destroy();
+        => Instance.Dispose();
 
     internal static void Play(string strHE, int loop = 0, int interval = 0, int intensityFactor = 255, int freqFactor = 0)
         => Instance.Play(strHE, loop, interval, intensityFactor, freqFactor);
@@ -202,12 +224,15 @@ public static class VibrationMotorWrapper
     internal static void SetTrigger(int index, int mode, int amplitude, int frequency, int resistive, int startPosition, int endPosition)
         => Instance.SetTrigger(index, mode, amplitude, frequency, resistive, startPosition, endPosition);
 
-    internal static string GetConnectedGameControllers()
-        => Instance.GetConnectedGameControllers();
+    internal static string GameControllers()
+        => Instance.GameControllers();
 
     internal static string GetVersion()
         => Instance.GetVersion();
 
     internal static void DebugLog(bool enable)
         => Instance.DebugLog(enable);
+
+    internal static string PtrToString(IntPtr p)
+        => Marshal.PtrToStringAnsi(p);
 }

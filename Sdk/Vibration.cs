@@ -24,7 +24,7 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.Init();
             init = true;
-            VibrationMotorWrapper.SetCallback(OnGameControllerChange);
+            VibrationMotorWrapper.RegisterCallback(OnGameControllerChange);
         }
         catch (ExternalException)
         {
@@ -343,7 +343,7 @@ public static class VibrationMotor
     {
         try
         {
-            var s = VibrationMotorWrapper.GetConnectedGameControllers();
+            var s = VibrationMotorWrapper.GameControllers();
             if (string.IsNullOrEmpty(s)) return new();
             var json = JsonObjectNode.TryParse(s);
             return json?.TryGetStringListValue("controllers", true) ?? new();
