@@ -13,7 +13,7 @@ namespace RichTap;
 /// <summary>
 /// The x64 implementation of vibration motor.
 /// </summary>
-internal static class VibrationMotorArm
+internal static class VibrationMotorLocal
 {
     public class ImplProxy : IVibrationMotorWrapper
     {
@@ -54,7 +54,7 @@ internal static class VibrationMotorArm
             => EnableDebugLog(enable);
     }
 
-    private const string AssemblyName = "arm64\\RichTapWinSDK.dll";
+    private const string AssemblyName = "RichTapWinSDK.dll";
 
     public static ImplProxy Instance = new();
 

@@ -42,6 +42,7 @@ public class VibrationCommandVerb : BaseCommandVerb
         console.WriteLine("Now playing. Press any key to stop.");
         console.ReadKey();
         console.WriteLine();
+        VibrationMotor.Stop();
         console.WriteLine("Stopped.");
     }
 

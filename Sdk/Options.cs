@@ -11,13 +11,6 @@ using Trivial.Text;
 namespace RichTap;
 
 /// <summary>
-/// The wrapper callback of vibration motor.
-/// </summary>
-/// <param name="data">The data.</param>
-/// <param name="size">The size.</param>
-public delegate void VibrationMotorCallback(string data, int size);
-
-/// <summary>
 /// The options of vibration.
 /// </summary>
 public class VibrationOptions

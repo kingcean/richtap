@@ -56,6 +56,13 @@ public class VibrationDescriptionModel
 
         return base.ToString();
     }
+
+    /// <summary>
+    /// Writes into a file.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
+    public void WriteTo(string filePath)
+        => File.WriteAllText(filePath, JsonSerializer.Serialize(this));
 }
 
 /// <summary>

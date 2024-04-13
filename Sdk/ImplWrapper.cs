@@ -11,10 +11,23 @@ using Trivial.Text;
 namespace RichTap;
 
 /// <summary>
+/// The wrapper callback of vibration motor.
+/// </summary>
+/// <param name="data">The data.</param>
+/// <param name="size">The size.</param>
+public delegate void VibrationMotorCallback(string data, int size);
+
+/// <summary>
 /// The core implementation interface of vibration motor.
 /// </summary>
 public interface IVibrationMotorWrapper
 {
+    /// <summary>
+    /// Tests if the assembly file exists.
+    /// </summary>
+    /// <returns>true if the assembly file exists; otherwise, false.</returns>
+    public bool Available();
+
     /// <summary>
     /// Initializes.
     /// </summary>
@@ -79,7 +92,7 @@ public interface IVibrationMotorWrapper
     void SetTrigger(int index, int mode, int amplitude, int frequency, int resistive, int startPosition, int endPosition);
 
     /// <summary>
-    /// Gets the connected game controllers.
+    /// Gets the information in JSON object about connected game controllers.
     /// </summary>
     /// <returns>The name.</returns>
     string GetConnectedGameControllers();
@@ -107,23 +120,26 @@ public static class VibrationMotorWrapper
     /// <summary>
     /// Gets or sets the instance.
     /// </summary>
-    public static IVibrationMotorWrapper Instance
+    internal static IVibrationMotorWrapper Instance
     {
         get
         {
+            if (instance != null) return instance;
 #if NET461
-            instance ??= Environment.Is64BitOperatingSystem
+            IVibrationMotorWrapper obj = Environment.Is64BitOperatingSystem
                 ? VibrationMotor64.Instance
                 : VibrationMotor32.Instance;
 #else
-            instance ??= RuntimeInformation.OSArchitecture switch
+            IVibrationMotorWrapper obj = RuntimeInformation.OSArchitecture switch
             {
                 Architecture.Arm64 => VibrationMotorArm.Instance,
                 Architecture.X86 => VibrationMotor32.Instance,
                 _ => VibrationMotor64.Instance
             };
 #endif
-            return instance;
+            if (!obj.Available() && VibrationMotorLocal.Instance.Available()) obj = VibrationMotorLocal.Instance;
+            instance = obj;
+            return obj;
         }
 
         set
@@ -131,6 +147,36 @@ public static class VibrationMotorWrapper
             instance = value;
         }
     }
+
+    /// <summary>
+    /// Sets by x64 wrapper instance to override.
+    /// </summary>
+    public static void UseX64()
+        => instance = VibrationMotor64.Instance;
+
+    /// <summary>
+    /// Sets by x86 wrapper instance to override.
+    /// </summary>
+    public static void UseX86()
+        => instance = VibrationMotor32.Instance;
+
+    /// <summary>
+    /// Sets by arm64 wrapper instance to override.
+    /// </summary>
+    public static void UseArm64()
+        => instance = VibrationMotorArm.Instance;
+
+    /// <summary>
+    /// Sets by local wrapper instance to override.
+    /// </summary>
+    public static void UseLocal()
+        => instance = VibrationMotorLocal.Instance;
+
+    /// <summary>
+    /// Sets by a specific wrapper instance to override.
+    /// </summary>
+    public static void Use(IVibrationMotorWrapper wrapper)
+        => instance = wrapper;
 
     internal static void Init()
         => Instance.Init();

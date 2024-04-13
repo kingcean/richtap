@@ -56,9 +56,13 @@ public static class VibrationMotor
             else VibrationMotorWrapper.Destroy();
             init = initialize;
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException(initialize ? "Initialize failed." : "Destroy failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to set initialization state.", ex);
+            throw new InvalidOperationException(initialize ? "Initialize failed." : "Destroy failed.", ex);
         }
     }
 
@@ -68,7 +72,20 @@ public static class VibrationMotor
     /// <returns>The version.</returns>
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static string Version()
-        => VibrationMotorWrapper.GetVersion();
+    {
+        try
+        {
+            return VibrationMotorWrapper.GetVersion();
+        }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Get version failed.", ex);
+        }
+        catch (ExternalException ex)
+        {
+            throw new InvalidOperationException("Get version failed.", ex);
+        }
+    }
 
     /// <summary>
     /// Plays a specific HE format content.
@@ -86,9 +103,13 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.Play(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue);
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Play failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to play.", ex);
+            throw new InvalidOperationException("Play failed.", ex);
         }
     }
 
@@ -109,9 +130,13 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.PlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), int.MaxValue);
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Play failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to play.", ex);
+            throw new InvalidOperationException("Play failed.", ex);
         }
     }
 
@@ -134,9 +159,13 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.PlaySection(he, options.LoopCount, options.LoopIntervalMilliseconds, options.GainIntValue, options.FrequencyFactorIntValue, GetMilliseconds(start), GetMilliseconds(end));
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Play failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to play.", ex);
+            throw new InvalidOperationException("Play failed.", ex);
         }
     }
 
@@ -271,9 +300,13 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.Stop();
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Stop failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to stop.", ex);
+            throw new InvalidOperationException("Stop failed.", ex);
         }
     }
 
@@ -291,9 +324,13 @@ public static class VibrationMotor
         {
             VibrationMotorWrapper.SendLoopParam(GetMilliseconds(interval), VibrationOptions.GetGainValue(gain), VibrationOptions.GetFrequencyFactorValue(frequencyFactor));
         }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("Update loop parameters failed.", ex);
+        }
         catch (ExternalException ex)
         {
-            throw new InvalidOperationException("Failed to update loop parameters.", ex);
+            throw new InvalidOperationException("Update loop parameters failed.", ex);
         }
     }
 
@@ -304,10 +341,21 @@ public static class VibrationMotor
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static List<string> ListGameControllers()
     {
-        var s = VibrationMotorWrapper.GetConnectedGameControllers();
-        if (string.IsNullOrEmpty(s)) return new();
-        var json = JsonObjectNode.TryParse(s);
-        return json?.TryGetStringListValue("controllers", true) ?? new();
+        try
+        {
+            var s = VibrationMotorWrapper.GetConnectedGameControllers();
+            if (string.IsNullOrEmpty(s)) return new();
+            var json = JsonObjectNode.TryParse(s);
+            return json?.TryGetStringListValue("controllers", true) ?? new();
+        }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException("List connected game controllers failed.", ex);
+        }
+        catch (ExternalException ex)
+        {
+            throw new InvalidOperationException("List connected game controllers failed.", ex);
+        }
     }
 
     /// <summary>
@@ -316,7 +364,20 @@ public static class VibrationMotor
     /// <param name="enable">true if enable debug log; otherwise, false.</param>
     /// <exception cref="DllNotFoundException">The implementation assembly required does not exist.</exception>
     public static void SetDebugLog(bool enable)
-        => VibrationMotorWrapper.DebugLog(enable);
+    {
+        try
+        {
+            VibrationMotorWrapper.DebugLog(enable);
+        }
+        catch (TypeInitializationException ex)
+        {
+            throw new InvalidOperationException(enable ? "Enable debug log output failed." : "Disable debug log output failed.", ex);
+        }
+        catch (ExternalException ex)
+        {
+            throw new InvalidOperationException(enable ? "Enable debug log output failed." : "Disable debug log output failed.", ex);
+        }
+    }
 
     internal static int GetMilliseconds(TimeSpan span)
     {
@@ -330,8 +391,5 @@ public static class VibrationMotor
         => GameControllerChanged?.Invoke(obj, new EventArgs());
 
     private static string GetFileString(FileInfo file)
-    {
-        if (file == null) throw new ArgumentNullException(nameof(file));
-        return File.ReadAllText(file.FullName);
-    }
+        => file == null ? throw new ArgumentNullException(nameof(file)) : File.ReadAllText(file.FullName);
 }

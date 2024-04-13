@@ -17,6 +17,9 @@ internal static class VibrationMotor32
 {
     public class ImplProxy : IVibrationMotorWrapper
     {
+        public bool Available()
+            => Exists();
+
         public void Init()
             => RichTapInit();
 
@@ -54,6 +57,13 @@ internal static class VibrationMotor32
     private const string AssemblyName = "x86\\RichTapWinSDK.dll";
 
     public static ImplProxy Instance = new();
+
+    /// <summary>
+    /// Tests if the assembly file exists.
+    /// </summary>
+    /// <returns>true if the assembly file exists; otherwise, false.</returns>
+    public static bool Exists()
+        => File.Exists(AssemblyName);
 
     [DllImport(AssemblyName)]
     public extern static void RichTapInit();
