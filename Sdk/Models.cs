@@ -17,6 +17,7 @@ public class VibrationDescriptionModel
     /// <summary>
     /// Gets or sets the metadata.
     /// </summary>
+    [JsonPropertyName("Metadata")]
     public VibrationMetadataModel Metadata { get; set; } = new();
 
     /// <summary>
@@ -73,6 +74,7 @@ public class VibrationMetadataModel
     /// <summary>
     /// Gets or sets the version.
     /// </summary>
+    [JsonPropertyName("Version")]
     public int Version { get; set; }
 
     /// <summary>
@@ -84,6 +86,7 @@ public class VibrationMetadataModel
     /// <summary>
     /// Gets or sets the description.
     /// </summary>
+    [JsonPropertyName("Description")]
     public string Description { get; set; }
 }
 
@@ -137,7 +140,7 @@ public class VibrationPatternListModel
     /// <param name="index">The index.</param>
     /// <param name="parameters">The additional parameters.</param>
     /// <returns>The pattern item model added.</returns>
-    public VibrationPatternItemModel AddContinuousPattern(string type, int duration, int relativeTime, int index, VibrationEventParameterModel parameters = null)
+    public VibrationPatternItemModel AddPattern(string type, int duration, int relativeTime, int index, VibrationEventParameterModel parameters = null)
         => AddPattern(new VibrationEventModel
         {
             VibrationType = type,
@@ -174,22 +177,26 @@ public class VibrationEventModel
     /// <summary>
     /// Gets or sets the duration.
     /// </summary>
+    [JsonPropertyName("Duration")]
     public int Duration { get; set; }
 
     /// <summary>
     /// Gets or sets the relative time.
     /// </summary>
+    [JsonPropertyName("RelativeTime")]
     public int RelativeTime { get; set; }
 
     /// <summary>
     /// Gets or sets the parameters.
     /// </summary>
+    [JsonPropertyName("Parameters")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public VibrationEventParameterModel Parameters { get; set; }
 
     /// <summary>
     /// Gets or sets the index.
     /// </summary>
+    [JsonPropertyName("Index")]
     public int Index { get; set; }
 
     /// <summary>

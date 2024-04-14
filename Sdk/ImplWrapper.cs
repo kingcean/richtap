@@ -224,6 +224,15 @@ public static class VibrationMotorWrapper
     internal static void SetTrigger(int index, int mode, int amplitude, int frequency, int resistive, int startPosition, int endPosition)
         => Instance.SetTrigger(index, mode, amplitude, frequency, resistive, startPosition, endPosition);
 
+    internal static bool StrengthGain(int index, int value)
+        => Instance.StrengthGain(index, value);
+
+    internal static bool SignalConverterState(bool isEnabled)
+        => Instance.SignalConverterState(isEnabled);
+
+    internal static bool RumbleState(bool isEnabled)
+        => Instance.RumbleState(isEnabled);
+
     internal static string GameControllers()
         => Instance.GameControllers();
 
